@@ -1,34 +1,31 @@
 package ca.northdepot;
 
 public class Response {
-    final static int LOOP = 10;
-    final static int PARAM = 12;
     static int allTimeCount = 0;
 
     public String version;
     public String colour;
-    public String compute;
     public int count;
     public long time;
+    public String compute;
     public int loop;
-    public String function;
     public int param;
 
     public Response() {
     }
 
-    public Response(String version, String colour) {
+    public Response(String version, String colour, int loop, int param) {
         this.version = version;
         this.colour = colour;
         this.count = ++allTimeCount;
-        this.compute = PARAM > 12 ? "slow" : "fast";
+        this.param = param;
+        this.loop = loop;
+        this.compute = "fib(" + param + ")";
+
         long start = System.currentTimeMillis();
-        this.param = PARAM;
-        this.loop = LOOP;
-        this.function = "fib(" + PARAM + ")";
-        int i = LOOP;
+        int i = loop;
         while (i-- > 0)
-            fib(PARAM);
+            fib(param);
         long end = System.currentTimeMillis();
         this.time = end - start;
     }
