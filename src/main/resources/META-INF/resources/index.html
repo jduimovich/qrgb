@@ -1,154 +1,221 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>rgb - 1.0.0-SNAPSHOT</title>
-    <style>
-        h1, h2, h3, h4, h5, h6 {
-            margin-bottom: 0.5rem;
-            font-weight: 400;
-            line-height: 1.5;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-        }
-
-        h2 {
-            font-size: 2rem
-        }
-
-        h3 {
-            font-size: 1.75rem
-        }
-
-        h4 {
-            font-size: 1.5rem
-        }
-
-        h5 {
-            font-size: 1.25rem
-        }
-
-        h6 {
-            font-size: 1rem
-        }
-
-        .lead {
-            font-weight: 300;
-            font-size: 2rem;
-        }
-
-        .banner {
-            font-size: 2.7rem;
-            margin: 0;
-            padding: 2rem 1rem;
-            background-color: #00A1E2;
-            color: white;
-        }
-
-        body {
-            margin: 0;
-            font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-        }
-
-        code {
-            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            font-size: 87.5%;
-            color: #e83e8c;
-            word-break: break-word;
-        }
-
-        .left-column {
-            padding: .75rem;
-            max-width: 75%;
-            min-width: 55%;
-        }
-
-        .right-column {
-            padding: .75rem;
-            max-width: 25%;
-        }
-
-        .container {
-            display: flex;
-            width: 100%;
-        }
-
-        li {
-            margin: 0.75rem;
-        }
-
-        .right-section {
-            margin-left: 1rem;
-            padding-left: 0.5rem;
-        }
-
-        .right-section h3 {
-            padding-top: 0;
-            font-weight: 200;
-        }
-
-        .right-section ul {
-            border-left: 0.3rem solid #00A1E2;
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-    </style>
+  <meta charset="utf-8">
+  <title>RGB</title>
+  <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
 </head>
+
 <body>
-
-<div class="banner lead">
-    Your new Cloud-Native application is ready!
-</div>
-
-<div class="container">
-    <div class="left-column">
-        <p class="lead"> Congratulations, you have created a new Quarkus application with RESTEasy.</p>
-
-        <h2>Why do you see this?</h2>
-
-        <p>This page is served by Quarkus. The source is in
-            <code>src/main/resources/META-INF/resources/index.html</code>.</p>
-
-        <h2>What can I do from here?</h2>
-
-        <p>If not already done, run the application in <em>dev mode</em> using: <code>./mvnw compile quarkus:dev</code>.
+  <h1>RGB History</h1>
+  <div id='barChart'></div>
+  <table style="width:100%">
+    <tr> 
+      <td>
+        <p>
+          <div id="trim"> History </div>
+          <input type="range" min="10" max="500" value="100" class="slider" id="trimmer">
         </p>
-        <ul>
-            <li>Open the example <a href="/resteasy/hello" target="_blank">"/hello"</a> endpoint</li>
-            <li>Add REST resources, Servlets, functions and other services in <code>src/main/java</code>.</li>
-            <li>Your static assets are located in <code>src/main/resources/META-INF/resources</code>.</li>
-            <li>Configure your application in <code>src/main/resources/application.properties</code>.
-            </li>
-        </ul>
+      </td>
+      <td>
+        <p>
+          <div id="pollrate"> Poll Rate </div>
+          <input type="range" min="10" max="1000" value="100" class="slider" id="poller">
+        </p>
+      </td>
+    </tr>
+  </table>
+  <div id="json"> 
 
-        <h2>Do you like Quarkus?</h2>
-        <p>Go give it a star on <a href="https://github.com/quarkusio/quarkus">GitHub</a>.</p>
 
-        <h2>How do I get rid of this page?</h2>
-        <p>Just delete the <code>src/main/resources/META-INF/resources/index.html</code> file.</p>
-    </div>
-    <div class="right-column">
-        <div class="right-section">
-            <h3>Application</h3>
-            <ul>
-                <li>GroupId: ca.northdepot</li>
-                <li>ArtifactId: rgb</li>
-                <li>Version: 1.0.0-SNAPSHOT</li>
-                <li>Quarkus Version: 1.9.2.Final</li>
-            </ul>
-        </div>
-        <div class="right-section">
-            <h3>Next steps</h3>
-            <ul>
-                <li><a href="https://quarkus.io/guides/maven-tooling.html" target="_blank">Setup your IDE</a></li>
-                <li><a href="https://quarkus.io/guides/getting-started.html" target="_blank">Getting started</a></li>
-                <li><a href="https://quarkus.io" target="_blank">Quarkus Web Site</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
+ 
+  <script>
+    function getJSONAndUpdate(url, updateCB, errorCB) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4) {
+          if (this.status == 200) { 
+            try {
+              const data = JSON.parse(this.responseText);
+              data.url = url;
+              updateCB(data);
+            } catch(err) { 
+              // keep going 
+              const data = { "left": 0, "right": 0, "url": url};
+              updateCB(data);
+            }  
+          } else {
+            if (errorCB) errorCB();
+          }
+        }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.setRequestHeader('Content-type', 'application/json');
+      xhttp.setRequestHeader('Accept', 'application/json');
+      xhttp.setRequestHeader('cache-control', 'no-cache, must-revalidate, post-check=0, pre-check=0');
+      xhttp.setRequestHeader('cache-control', 'max-age=0');
+      xhttp.setRequestHeader('expires', '0');
+      xhttp.setRequestHeader('expires', 'Tue, 01 Jan 1980 1:00:00 GMT');
+      xhttp.setRequestHeader('pragma', 'no-cache');
+      xhttp.send();
+    }
+    var configuration = {
+      "versions": new Object(),
+      "total": 0,
+      "max_history": 100,
+      "history": [],
+      "url": 'test',
+      "debug": false,
+      "period": 30,
+      "enableAB": false
+    };
+
+    function prettyPrintLeftRight(left) {
+      return "L/R Balance = " + left + "/" + (100 - left)
+    }
+ 
+    function setBalance(balance, cb) {
+      getJSONAndUpdate("config?balance=" + balance, cb);
+    }
+ 
+
+    function updateBalance(ret) {
+      document.getElementById("mode").innerHTML = prettyPrintLeftRight(ret.left);
+    }
+    function updateBalanceAndSlider(ret) {
+      updateBalance(ret);
+      
+      slider.value = ret.left;
+      
+    }
+  
+
+    var trimmer = document.getElementById("trimmer");
+    trimmer.oninput = function () {
+      document.getElementById("trim").innerHTML = 'History: ' + this.value;
+      configuration.max_history = this.value;
+    }
+    trimmer.onchange = trimmer.oninput;
+    function setPeriod(p) {
+      document.getElementById("pollrate").innerHTML =
+        'Poll Rate: ' + p + ' ms';
+      configuration.period = p;
+      poller.value = p;
+    }
+    var poller = document.getElementById("poller");
+    poller.oninput = function () {
+      setPeriod(this.value)
+    }
+    poller.onchange = poller.oninput;
+
+    function countResponses_then_resetPoll(countData) {
+      if (countData.colour == undefined) { 
+        hookpoll();
+        return;
+      }
+
+      var versions = configuration.versions;
+      var dataForColour = versions[countData.colour];
+      if (!dataForColour) {
+        dataForColour = { "count": 0, "version": countData.version };
+        versions[countData.colour] = dataForColour;
+      }
+      dataForColour.count++;
+      dataForColour.allTimeCount = countData.count;
+
+      configuration.history.push(countData);
+      while (configuration.history.length > configuration.max_history) {
+        var remove = configuration.history.shift();
+        var dataForColour = configuration.versions[remove.colour];
+        dataForColour.count--;
+      }
+      showResposeText(countData)
+      hookpoll();
+      showBarChart(configuration);
+    }
+
+    function showBarChart(configuration) {
+      var all = configuration.versions;
+      var colours = Object.keys(all);
+      colours.sort(function (a, b) { return all[a].version - all[b].version; });
+      var totalRequests = 0;
+      for (var i = 0; i < colours.length; i++) {
+        var dataforcolour = all[colours[i]];
+        if (dataforcolour.count > 0) {
+          totalRequests += dataforcolour.count;
+        }
+      }
+      var newData = [];
+      var xValue = ['Microservice endpoint = /test '];
+      var ab = ['A', 'B', 'C', 'D', 'E', 'F'];
+      var abi = 0;
+      for (var i = 0; i < colours.length; i++) {
+        var dataforcolour = all[colours[i]];
+        if (dataforcolour.count >= 0) {
+          var percent = (dataforcolour.count / totalRequests) * 100;
+          if (dataforcolour.count == 0) {
+            percent = -2;
+          }
+          var yValue = [percent];
+          var text = percent == -2 ? "" : Math.round(yValue.map(String));
+          var legend = 'V:' + dataforcolour.version;
+          if (percent == -2) {
+            legend = legend + ' (unused)';
+          } else {
+            legend = legend + ' ' + ab[abi++];
+            if (abi > ab.length) abi = 0;
+          }
+          var bar = {
+            x: xValue,
+            y: yValue,
+            name: legend,
+            type: 'bar',
+            text: text,
+            textposition: 'auto',
+            hoverinfo: 'none',
+            opacity: 0.5,
+            marker: {
+              color: colours[i],
+              line: {
+                color: 'black',
+                width: 1
+              }
+            }
+          };
+          newData.push(bar);
+        }
+      }
+      var layout = {
+        title: 'Ratio',
+        yaxis: { range: [0, 100] }
+      };
+
+      Plotly.newPlot('barChart', newData, layout);
+    }
+
+    function hookpoll() {
+      setTimeout("poll()", configuration.period);
+    }
+    // reset poll only after response to prevent overruning target server.
+    function poll() {
+      getJSONAndUpdate(configuration.url, countResponses_then_resetPoll, hookpoll);
+    }
+
+    function showResposeText(countData) {
+      if (configuration.debug) {
+        document.getElementById("json").innerHTML = 
+        ' <br><b>DEBUG:</b> ' +   JSON.stringify(countData) ;
+      }
+    }
+    if (window.location.href.includes("debug")) {
+      configuration.debug = true;
+    }
+    // kick it off
+    poll(); 
+    trimmer.onchange()
+    poller.onchange()
+  </script>
 </body>
+
 </html>
