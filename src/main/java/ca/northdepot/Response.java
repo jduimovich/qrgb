@@ -1,23 +1,32 @@
 package ca.northdepot;
+import java.net.InetAddress;
 
-public class Response {
+public class Response {  
     static int allTimeCount = 0;
 
+    public String hostname;
     public String version;
     public String colour;
     public int count;
-    public long time;
-    public String compute;
-    public int loop;
+    public String stack;
     public int param;
+    public int loop;
+    public String compute;
+    public long time;
 
     public Response() {
     }
 
     public Response(String version, String colour, int loop, int param) {
+        try { 
+            this.hostname = InetAddress.getLocalHost().getHostName();
+        } catch (Exception e) { 
+            this.hostname = "Error Getting Hostname";
+        }
         this.version = version;
         this.colour = colour;
         this.count = ++allTimeCount;
+        this.stack = "Quarkus";
         this.param = param;
         this.loop = loop;
         this.compute = "fib(" + param + ")";
