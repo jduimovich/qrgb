@@ -4,18 +4,18 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
-public class GreetingResourceTest {
+public class RGBTest {
 
     @Test
-    public void testHelloEndpoint() {
+    public void testTestEndpoint() {
         given()
-          .when().get("/resteasy/hello")
+          .when().get("/test")
           .then()
-             .statusCode(200)
-             .body(is("hello"));
+             .statusCode(200);
     }
 
 }
