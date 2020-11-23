@@ -8,8 +8,7 @@ public class Response {
     public String version;
     public String colour;
     public int count;
-    public String stack;
-    public int param;
+    public String stack; 
     public int loop;
     public String compute;
     public long time;
@@ -26,8 +25,7 @@ public class Response {
         this.version = version;
         this.colour = colour;
         this.count = ++allTimeCount;
-        this.stack = "Quarkus";
-        this.param = param;
+        this.stack = "Quarkus"; 
         this.loop = loop;
         this.compute = "fib(" + param + ")";
 
