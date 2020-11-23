@@ -1,50 +1,42 @@
-# rgb project
+# Graphtuitous
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+Graphtuitous is demo application that uses graphs, a simple service with compute to demonstrate e2e development, innerloop and outerloop.
+  
+ This app was ported from https://github.com/jduimovich/rgb into Quarkus.
 
-## Running the application in dev mode
+This app has one endpoint /test and is used to demonstrate simple applications on kubernetes. 
 
-You can run your application in dev mode that enables live coding using:
-```shell script
-./mvnw compile quarkus:dev
+It will return a JSON object. 
 ```
+{ 
+        "hostname":"johnpc"
+        "version": 1.1, 
+        "colour": "blue",
+        "count": 1,
+        "stack": "runtime used in demo",  
+        "loop": 1,
+        "compute": "fib(n)",
+        "time": 1
+      }
 
-## Packaging and running the application
-
-The application can be packaged using:
-```shell script
-./mvnw package
-```
-It produces the `rgb-1.0.0-SNAPSHOT-runner.jar` file in the `/target` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
-
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
-```
-
-The application is now runnable using `java -jar target/rgb-1.0.0-SNAPSHOT-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using: 
-```shell script
-./mvnw package -Pnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/rgb-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.html.
-
-# RESTEasy JAX-RS
-
-Guide: https://quarkus.io/guides/rest-json
-
-
+``` 
+ 
+`hostname`  Hostname of the pod that executed the service on kubernetes.This can be used to demonstrate replicas, failures
+        and scaling.
+	
+`version` Version of the app that executed the service on kubernetes.  
+  
+ `colour`    Recommended graphing colour for demo purposes. Used to show live edit, and outerloop changes.
+  
+ `count`   Returns the number of times this server instance has returned a response.
+        When a pod dies and is restarted, the counts restart at zero.
+	
+`stack`   Name of the runtime used to implement the service. Quarkus, node.js, java. 
+        Can be used to demonstrate replacing a service in one language with another one using gitops or adding deployments.
+	      
+`loop` Loop count on how many times function is run. Currently hardcoded, to be changed to pass as argument.
+   
+   `compute` Server side function name and parameter as a string. 
+  
+   `time` Execution time on the server for the specific demo function and loop count.
